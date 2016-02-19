@@ -161,10 +161,10 @@ function fmt(x; kwargs...)
 end
 
 # some helper method calls, which just convert to kwargs
-fmt(x, prec::Int, args...; kwargs...) = fmt(x, args...; prec=prec, kwargs...)
+fmt(x, width::Int, args...; kwargs...) = fmt(x, args...; width=width, kwargs...)
 
-fmt(x, prec::Int, width::Int, args...; kwargs...) =
-    fmt(x, args...; prec=prec, width=width, kwargs...)
+fmt(x, width::Int, prec::Int, args...; kwargs...) =
+    fmt(x, args...; width=width, prec=prec, kwargs...)
 
 # integrate some symbol shorthands into the keyword args
 # note: as above, this will generate relavent kwargs, so to format in a tight loop, you should probably update the fmt_default

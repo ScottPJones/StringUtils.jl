@@ -9,6 +9,7 @@ export @u_str, @sinterpolate
 export s_unescape_string, s_escape_string, s_print_unescaped, s_print_escaped
 
 include("literals.jl")
+include("unicodenames.jl")
 
 # From Formatting.jl
 import Base.show
