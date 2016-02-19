@@ -16,3 +16,12 @@ Finally, I have added two new ways of representing characters in the literal str
 This makes life a lot easier when you want to keep the text of a program in ASCII, and
 also to be able to write programs using those characters that might not even display
 correctly in their editor.
+
+This now has some initial formatting capability, based on Tom Breloff's wonderful PR #10 to the
+JuliaLang/Formatting.jl package (by Dahua Lin and other contributors).
+`\%(arguments)` is interpolated as a call to fmt(arguments).
+
+I also plan on adding support for `\%c(arguments)`, where c is a C style formatting character.
+I'm debating if I should make it take the full C style syntax, with leading 0, width/precision,
+etc, before the single character.
+

@@ -5,6 +5,12 @@ Copyright (c) 2016 Gandalf Software, Inc. (Scott P. Jones)
 Portions based on code that is part of Julia, licensed under the MIT license,
 and also Eric Forgy's StringInterpolations.jl package.
 
+Portions are based on code submitted as a PR to the Formatting.jl package,
+also under MIT "Expat" license: Copyright (c) 2015 Tom Breloff
+
+Portions are based on the Formatting.jl package, also under MIT "Expat" license:
+Copyright (c) 2014: Dahua Lin and contributors.
+
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
 > in the Software without restriction, including without limitation the rights
@@ -22,4 +28,3 @@ and also Eric Forgy's StringInterpolations.jl package.
 > LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > SOFTWARE.
-> 

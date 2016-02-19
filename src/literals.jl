@@ -165,9 +165,9 @@ function s_interp_parse(s::AbstractString, unescape::Function, p::Function)
                     is(ex.head, :continue) && throw(ParseError("Incomplete expression"))
                     # Need to wrap call to fmt around expression
                     if ex.head == :tuple
-                        push!(sx, esc(:(fmt(ex.args...))))
+                        push!(sx, esc(:(fmt($(ex.args...)))))
                     else
-                        push!(sx, esc(:(fmt(ex.args[1]))))
+                        push!(sx, esc(:(fmt($(ex.args[1])))))
                     end
                 else
                     push!(sx, esc(:(fmt($ex))))
