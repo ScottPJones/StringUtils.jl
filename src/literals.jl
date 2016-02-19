@@ -63,7 +63,7 @@ function s_parse_latex(io, s,  i)
     beg = i # start location
     c, i = next(s, i)
     while c != '}'
-        done(s, i) && throw(ArgumentError("\\: missing closing : in $(repr(s))"))
+        done(s, i) && throw(ArgumentError("\\{ missing closing } in $(repr(s))"))
         c, i = next(s, i)
     end
     latexstr = get(Base.REPLCompletions.latex_symbols, string("\\", s[beg:i-2]), "")
@@ -133,17 +133,49 @@ function s_interp_parse(s::AbstractString, unescape::Function, p::Function)
     i = j = start(s)
     while !done(s, j)
         c, k = next(s, j)
-        if c == '\\' && !done(s, k) && s[k] == '('
-            # Handle interpolation
-            if !isempty(s[i:j-1])
-                push!(sx, unescape(s[i:j-1]))
+        if c == '\\' && !done(s, k)
+            if s[k] == '('
+                # Handle interpolation
+                if !isempty(s[i:j-1])
+                    push!(sx, unescape(s[i:j-1]))
+                end
+                ex, j = parse(s, k, greedy=false)
+                if isa(ex, Expr) && is(ex.head, :continue)
+                    throw(ParseError("Incomplete expression"))
+                end
+                push!(sx, esc(ex))
+                i = j
+            elseif s[k] == '%'
+                # Move past \\, c should point to '%'
+                c, k = next(s, k)
+                done(s, k) && throw(ParseError("Incomplete % expression"))
+                # Handle interpolation
+                if !isempty(s[i:j-1])
+                    push!(sx, unescape(s[i:j-1]))
+                end
+                c = s[k]
+                if c != '('
+                    # Move past %, c should point to letter
+                    c, k = next(s, k)
+                    s[k] == '(' || throw(ParseError("Missing ( in % format"))
+                end
+                # c is now either ( or C format letter to be used
+                ex, j = parse(s, k, greedy=false)
+                if isa(ex, Expr)
+                    is(ex.head, :continue) && throw(ParseError("Incomplete expression"))
+                    # Need to wrap call to fmt around expression
+                    if ex.head == :tuple
+                        push!(sx, esc(:(fmt(ex.args...))))
+                    else
+                        push!(sx, esc(:(fmt(ex.args[1]))))
+                    end
+                else
+                    push!(sx, esc(:(fmt($ex))))
+                end
+                i = j
+            else
+                j = k
             end
-            ex, j = parse(s, k, greedy=false)
-            if isa(ex, Expr) && is(ex.head, :continue)
-                throw(ParseError("Incomplete expression"))
-            end
-            push!(sx, esc(ex))
-            i = j
         else
             j = k
         end
