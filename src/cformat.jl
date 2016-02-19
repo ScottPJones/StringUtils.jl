@@ -6,10 +6,6 @@ function sprintf1( fmt::ASCIIString, x )
     f( x )
 end
 
-if VERSION < v"0.4-"
-    const base64encode = base64
-end
-
 function generate_formatter( fmt::ASCIIString )
     global formatters
     if haskey( formatters, fmt )
@@ -153,11 +149,11 @@ function format{T<:Real}( x::T;
         parens::Bool=false, # use (1.00) instead of -1.00. Used in finance
         alternative::Bool=false, # usually for hex
         mixedfraction::Bool=false,
-        mixedfractionsep::String="_",
-        fractionsep::String="/", # num / den
+        mixedfractionsep::UTF8String="_",
+        fractionsep::UTF8String="/", # num / den
         fractionwidth::Int = 0,
         tryden::Int = 0, # if 2 or higher, try to use this denominator, without losing precision
-        suffix::String="", # useful for units/%
+        suffix::UTF8String="", # useful for units/%
         autoscale::Symbol=:none, # :metric, :binary or :finance
         conversion::ASCIIString=""
         )

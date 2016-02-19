@@ -12,7 +12,7 @@ end
 
 ### print string or char
 
-function _pfmt_s(out::IO, fs::FormatSpec, s::Union(String,Char))
+function _pfmt_s(out::IO, fs::FormatSpec, s::Union{AbstractString,Char})
     wid = fs.width
     slen = length(s)
     if wid <= slen
@@ -35,12 +35,12 @@ end
 _mul(x::Integer, ::_Dec) = x * 10
 _mul(x::Integer, ::_Bin) = x << 1
 _mul(x::Integer, ::_Oct) = x << 3
-_mul(x::Integer, ::Union(_Hex, _HEX)) = x << 4
+_mul(x::Integer, ::Union{_Hex, _HEX}) = x << 4
 
 _div(x::Integer, ::_Dec) = div(x, 10)
 _div(x::Integer, ::_Bin) = x >> 1
 _div(x::Integer, ::_Oct) = x >> 3
-_div(x::Integer, ::Union(_Hex, _HEX)) = x >> 4
+_div(x::Integer, ::Union{_Hex, _HEX}) = x >> 4
 
 function _ndigits(x::Integer, op)  # suppose x is non-negative
     m = 1
@@ -53,15 +53,15 @@ function _ndigits(x::Integer, op)  # suppose x is non-negative
 end
 
 _ipre(op) = ""
-_ipre(::Union(_Hex, _HEX)) = "0x"
+_ipre(::Union{_Hex, _HEX}) = "0x"
 _ipre(::_Oct) = "0o"
 _ipre(::_Bin) = "0b"
 
-_digitchar(x::Integer, ::_Bin) = @compat Char(x == 0 ? '0' : '1')
-_digitchar(x::Integer, ::_Dec) = @compat Char('0' + x)
-_digitchar(x::Integer, ::_Oct) = @compat Char('0' + x)
-_digitchar(x::Integer, ::_Hex) = @compat Char(x < 10 ? '0' + x : 'a' + (x - 10))
-_digitchar(x::Integer, ::_HEX) = @compat Char(x < 10 ? '0' + x : 'A' + (x - 10))
+_digitchar(x::Integer, ::_Bin) = Char(x == 0 ? '0' : '1')
+_digitchar(x::Integer, ::_Dec) = Char('0' + x)
+_digitchar(x::Integer, ::_Oct) = Char('0' + x)
+_digitchar(x::Integer, ::_Hex) = Char(x < 10 ? '0' + x : 'a' + (x - 10))
+_digitchar(x::Integer, ::_HEX) = Char(x < 10 ? '0' + x : 'A' + (x - 10))
 
 _signchar(x::Number, s::Char) = x < 0 ? '-' :
                                 s == '+' ? '+' :
@@ -171,7 +171,7 @@ function _pfmt_float(out::IO, sch::Char, zs::Integer, intv::Real, decv::Real, pr
     end
 end
 
-function _pfmt_f(out::IO, fs::FormatSpec, x::FloatingPoint)
+function _pfmt_f(out::IO, fs::FormatSpec, x::AbstractFloat)
     # separate sign, integer, and decimal part
     ax = abs(x)
     sch = _signchar(x, fs.sign)
@@ -222,12 +222,12 @@ function _pfmt_floate(out::IO, sch::Char, zs::Integer, u::Real, prec::Int, e::In
         e = -e
     end
     (e1, e2) = divrem(e, 10)
-    write(out, @compat Char('0' + e1))
-    write(out, @compat Char('0' + e2))
+    write(out, Char('0' + e1))
+    write(out, Char('0' + e2))
 end
 
 
-function _pfmt_e(out::IO, fs::FormatSpec, x::FloatingPoint)
+function _pfmt_e(out::IO, fs::FormatSpec, x::AbstractFloat)
     # extract sign, significand, and exponent
     ax = abs(x)
     sch = _signchar(x, fs.sign)
@@ -265,7 +265,7 @@ function _pfmt_e(out::IO, fs::FormatSpec, x::FloatingPoint)
 end
 
 
-function _pfmt_g(out::IO, fs::FormatSpec, x::FloatingPoint)
+function _pfmt_g(out::IO, fs::FormatSpec, x::AbstractFloat)
     # number decomposition
     ax = abs(x)
     if 1.0e-4 <= ax < 1.0e6
@@ -275,7 +275,7 @@ function _pfmt_g(out::IO, fs::FormatSpec, x::FloatingPoint)
     end
 end
 
-function _pfmt_specialf(out::IO, fs::FormatSpec, x::FloatingPoint)
+function _pfmt_specialf(out::IO, fs::FormatSpec, x::AbstractFloat)
     if isinf(x) 
         if x > 0
             _pfmt_s(out, fs, "Inf")

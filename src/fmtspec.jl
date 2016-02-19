@@ -90,7 +90,7 @@ end
 
 const _spec_regex = r"^(.?[<>])?([ +-])?(#)?(\d+)?(,)?(.\d+)?([bcdeEfFgGnosxX])?$"
 
-function FormatSpec(s::String)
+function FormatSpec(s::AbstractString)
     # default spec
     _fill = ' '
     _align = '\0'
@@ -178,14 +178,14 @@ type _HEX end
 type _Bin end
 
 _srepr(x) = repr(x)
-_srepr(x::String) = x
+_srepr(x::AbstractString) = x
 _srepr(x::Char) = string(x)
 
 function printfmt(io::IO, fs::FormatSpec, x)
     cls = fs.cls
     ty = fs.typ
     if cls == 'i'
-        ix = @compat Integer(x)
+        ix = Integer(x)
         ty == 'd' || ty == 'n' ? _pfmt_i(io, fs, ix, _Dec()) :
         ty == 'x' ? _pfmt_i(io, fs, ix, _Hex()) :
         ty == 'X' ? _pfmt_i(io, fs, ix, _HEX()) :
@@ -203,11 +203,11 @@ function printfmt(io::IO, fs::FormatSpec, x)
     elseif cls == 's'
         _pfmt_s(io, fs, _srepr(x))
     else # cls == 'c'
-        _pfmt_s(io, fs, @compat Char(x))
+        _pfmt_s(io, fs, Char(x))
     end
 end
 
 printfmt(fs::FormatSpec, x) = printfmt(STDOUT, fs, x)
 
 cfmt(fs::FormatSpec, x) = (buf = IOBuffer(); printfmt(buf, fs, x); bytestring(buf))
-cfmt(spec::String, x) = cfmt(FormatSpec(spec), x)
+cfmt(spec::AbstractString, x) = cfmt(FormatSpec(spec), x)
