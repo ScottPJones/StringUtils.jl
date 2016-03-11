@@ -63,12 +63,32 @@ function s_parse_latex(io, s,  i)
     beg = i # start location
     c, i = next(s, i)
     while c != '}'
-        done(s, i) && throw(ArgumentError("\\: missing closing : in $(repr(s))"))
+        done(s, i) && throw(ArgumentError("\\{ missing closing } in $(repr(s))"))
         c, i = next(s, i)
     end
     latexstr = get(Base.REPLCompletions.latex_symbols, string("\\", s[beg:i-2]), "")
     latexstr == "" && throw(ArgumentError("Invalid LaTex name in $(repr(s))"))
     print(io, latexstr)
+    i
+end
+
+"""
+Handle Unicode name, of form \\N{<name>}, from Python
+"""
+function s_parse_uniname(io, s,  i)
+    done(s, i) && throw(ArgumentError("\\N incomplete in $(repr(s))"))
+    c, i = next(s, i)
+    c != '{' && throw(ArgumentError("\\N missing initial { in $(repr(s))"))
+    done(s, i) && throw(ArgumentError("\\N{ incomplete in $(repr(s))"))
+    beg = i # start location
+    c, i = next(s, i)
+    while c != '}'
+        done(s, i) && throw(ArgumentError("\\N{ missing closing } in $(repr(s))"))
+        c, i = next(s, i)
+    end
+    unichar = get(UnicodeNames, uppercase(s[beg:i-2]), typemax(UInt32))
+    unichar == typemax(UInt32) && throw(ArgumentError("Invalid Unicode name in $(repr(s))"))
+    print(io, Char(unichar))
     i
 end
 
@@ -89,6 +109,8 @@ function s_print_unescaped(io, s::AbstractString)
                 i = s_parse_emoji(io, s, i)
             elseif c == '{'	# LaTex
                 i = s_parse_latex(io, s, i)
+            elseif c == 'N'	# Unicode name
+                i = s_parse_uniname(io, s, i)
             else
                 c = (c == '0' ? '\0' :
                      c == '"' ? '"'  :
@@ -133,17 +155,52 @@ function s_interp_parse(s::AbstractString, unescape::Function, p::Function)
     i = j = start(s)
     while !done(s, j)
         c, k = next(s, j)
-        if c == '\\' && !done(s, k) && s[k] == '('
-            # Handle interpolation
-            if !isempty(s[i:j-1])
-                push!(sx, unescape(s[i:j-1]))
+        if c == '\\' && !done(s, k)
+            if s[k] == '('
+                # Handle interpolation
+                if !isempty(s[i:j-1])
+                    push!(sx, unescape(s[i:j-1]))
+                end
+                ex, j = parse(s, k, greedy=false)
+                if isa(ex, Expr) && is(ex.head, :continue)
+                    throw(ParseError("Incomplete expression"))
+                end
+                push!(sx, esc(ex))
+                i = j
+            elseif s[k] == '%'
+                # Move past \\, c should point to '%'
+                c, k = next(s, k)
+                done(s, k) && throw(ParseError("Incomplete % expression"))
+                # Handle interpolation
+                if !isempty(s[i:j-1])
+                    push!(sx, unescape(s[i:j-1]))
+                end
+                if s[k] == '('
+                    # Need to find end to parse to
+                    _, j = parse(s, k, greedy=false)
+                    # This is a bit hacky, and probably doesn't perform as well as it could,
+                    # but it works! Same below.
+                    str = "(fmt" * s[k:j-1] * ")"
+                else
+                    # Move past %, c should point to letter
+                    beg = k
+                    while true
+                        c, k = next(s, k)
+                        done(s, k) && throw(ParseError("Incomplete % expression"))
+                        s[k] == '(' && break
+                    end
+                    _, j = parse(s, k, greedy=false)
+                    str = string("(cfmt(\"", s[beg:k-1], "\",", s[k+1:j-1], ")")
+                end
+                ex, _ = parse(str, 1, greedy=false)
+                if isa(ex, Expr) && is(ex.head, :continue)
+                    throw(ParseError("Incomplete expression"))
+                end
+                push!(sx, esc(ex))
+                i = j
+            else
+                j = k
             end
-            ex, j = parse(s, k, greedy=false)
-            if isa(ex, Expr) && is(ex.head, :continue)
-                throw(ParseError("Incomplete expression"))
-            end
-            push!(sx, esc(ex))
-            i = j
         else
             j = k
         end
