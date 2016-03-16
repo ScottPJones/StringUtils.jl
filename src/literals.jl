@@ -102,7 +102,7 @@ function s_parse_uniname(io, s,  i)
         done(s, i) && throw(ArgumentError("\\N{ missing closing } in $(repr(s))"))
         c, i = next(s, i)
     end
-    unichar = get(UnicodeNames, uppercase(s[beg:i-2]), typemax(UInt32))
+    unichar = UnicodeNames.lookupchar(uppercase(s[beg:i-2]))
     unichar == typemax(UInt32) && throw(ArgumentError("Invalid Unicode name in $(repr(s))"))
     print(io, Char(unichar))
     i
