@@ -13,7 +13,7 @@ immutable ArgSpec
     end
 end
 
-getarg(args, sp::ArgSpec) = 
+getarg(args, sp::ArgSpec) =
     (a = args[sp.argidx]; sp.hasfilter ? sp.filter(a) : a)
 
 # pos > 0: must not have iarg in expression (use pos+1), return (entry, pos + 1)
@@ -165,7 +165,4 @@ printfmt(fe::StringOrFE, args...) = printfmt(STDOUT, fe, args...)
 
 printfmtln(io::IO, fe::StringOrFE, args...) = (printfmt(io, fe, args...); println(io))
 printfmtln(fe::StringOrFE, args...) = printfmtln(STDOUT, fe, args...)
-
-format(fe::StringOrFE, args...) = 
-    (buf = IOBuffer(); printfmt(buf, fe, args...); bytestring(buf))
 

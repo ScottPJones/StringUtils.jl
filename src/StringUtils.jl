@@ -10,11 +10,13 @@ export s_unescape_string, s_escape_string, s_print_unescaped, s_print_escaped
 
 include("literals.jl")
 include("unicodenames.jl")
+include("htmlnames.jl")
 
 # From Formatting.jl
 import Base.show
 
-export cfmt, fmt, fmt_default, fmt_default!
+export FormatSpec, FormatExpr, printfmt, printfmtln, format, generate_formatter
+export pyfmt, cfmt, fmt, fmt_default, fmt_default!, reset!, defaultSpec
 
 include("cformat.jl" )
 include("fmtspec.jl")

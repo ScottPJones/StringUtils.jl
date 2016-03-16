@@ -1,6 +1,6 @@
 formatters = Dict{ ASCIIString, Function }()
 
-function sprintf1( fmt::ASCIIString, x )
+function cfmt( fmt::ASCIIString, x )
     global formatters
     f = generate_formatter( fmt )
     f( x )
@@ -159,7 +159,7 @@ function format{T<:Real}( x::T;
         )
     checkwidth = commas
     if conversion == ""
-        if T <: FloatingPoint || T <: Rational && precision != -1
+        if T <: AbstractFloat || T <: Rational && precision != -1
             actualconv = "f"
         elseif T <: Unsigned
             actualconv = "x"
@@ -178,7 +178,7 @@ function format{T<:Real}( x::T;
     if T <: Rational && conversion == "s"
         stripzeros = false
     end
-    if ( T <: FloatingPoint && actualconv == "f" || T <: Integer ) && autoscale != :none
+    if ( T <: AbstractFloat && actualconv == "f" || T <: Integer ) && autoscale != :none
         actualconv = "f"
         if autoscale == :metric
             scales = [
@@ -198,7 +198,7 @@ function format{T<:Real}( x::T;
                         break
                     end
                 end
-            elseif T <: FloatingPoint
+            elseif T <: AbstractFloat
                 smallscales = [
                     ( 1e-12, "p" ),
                     ( 1e-9,  "n" ),
@@ -254,7 +254,7 @@ function format{T<:Real}( x::T;
             actualx = x
         end
     end
-    s = sprintf1( generate_format_string( width=width,
+    s = cfmt( generate_format_string( width=width,
         precision=precision,
         leftjustified=leftjustified,
         zeropadding=zeropadding,
