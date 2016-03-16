@@ -57,18 +57,34 @@ function s_parse_emoji(io, s,  i)
 end
 
 """
-Handle LaTex character/string, of form \\{<name>}
+Handle LaTex character/string, of form \\<name>
 """
 function s_parse_latex(io, s,  i)
     beg = i # start location
     c, i = next(s, i)
-    while c != '}'
-        done(s, i) && throw(ArgumentError("\\{ missing closing } in $(repr(s))"))
+    while c != '>'
+        done(s, i) && throw(ArgumentError("\\< missing closing > in $(repr(s))"))
         c, i = next(s, i)
     end
     latexstr = get(Base.REPLCompletions.latex_symbols, string("\\", s[beg:i-2]), "")
     latexstr == "" && throw(ArgumentError("Invalid LaTex name in $(repr(s))"))
     print(io, latexstr)
+    i
+end
+
+"""
+Handle HTML character/string, of form \\&<name>;
+"""
+function s_parse_html(io, s,  i)
+    beg = i # start location
+    c, i = next(s, i)
+    while c != ';'
+        done(s, i) && throw(ArgumentError("\\& missing ending ; in $(repr(s))"))
+        c, i = next(s, i)
+    end
+    htmlstr = HTMLNames.lookupname(s[beg:i-2])
+    htmlstr == "" && throw(ArgumentError("Invalid HTML name in $(repr(s))"))
+    print(io, htmlstr)
     i
 end
 
@@ -107,7 +123,9 @@ function s_print_unescaped(io, s::AbstractString)
                 i = s_parse_unicode(io, s, i)
             elseif c == ':'	# Emoji
                 i = s_parse_emoji(io, s, i)
-            elseif c == '{'	# LaTex
+            elseif c == '&'	# HTML
+                i = s_parse_html(io, s, i)
+            elseif c == '<'	# LaTex
                 i = s_parse_latex(io, s, i)
             elseif c == 'N'	# Unicode name
                 i = s_parse_uniname(io, s, i)

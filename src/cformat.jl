@@ -159,7 +159,7 @@ function format{T<:Real}( x::T;
         )
     checkwidth = commas
     if conversion == ""
-        if T <: FloatingPoint || T <: Rational && precision != -1
+        if T <: AbstractFloat || T <: Rational && precision != -1
             actualconv = "f"
         elseif T <: Unsigned
             actualconv = "x"
@@ -178,7 +178,7 @@ function format{T<:Real}( x::T;
     if T <: Rational && conversion == "s"
         stripzeros = false
     end
-    if ( T <: FloatingPoint && actualconv == "f" || T <: Integer ) && autoscale != :none
+    if ( T <: AbstractFloat && actualconv == "f" || T <: Integer ) && autoscale != :none
         actualconv = "f"
         if autoscale == :metric
             scales = [
@@ -198,7 +198,7 @@ function format{T<:Real}( x::T;
                         break
                     end
                 end
-            elseif T <: FloatingPoint
+            elseif T <: AbstractFloat
                 smallscales = [
                     ( 1e-12, "p" ),
                     ( 1e-9,  "n" ),
