@@ -1,6 +1,6 @@
 formatters = Dict{ ASCIIString, Function }()
 
-function sprintf1( fmt::ASCIIString, x )
+function cfmt( fmt::ASCIIString, x )
     global formatters
     f = generate_formatter( fmt )
     f( x )
@@ -254,7 +254,7 @@ function format{T<:Real}( x::T;
             actualx = x
         end
     end
-    s = sprintf1( generate_format_string( width=width,
+    s = cfmt( generate_format_string( width=width,
         precision=precision,
         leftjustified=leftjustified,
         zeropadding=zeropadding,

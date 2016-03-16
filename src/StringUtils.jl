@@ -16,7 +16,7 @@ include("htmlnames.jl")
 import Base.show
 
 export FormatSpec, FormatExpr, printfmt, printfmtln, format, generate_formatter
-export cfmt, fmt, fmt_default, fmt_default!, reset!, defaultSpec
+export pyfmt, cfmt, fmt, fmt_default, fmt_default!, reset!, defaultSpec
 
 include("cformat.jl" )
 include("fmtspec.jl")

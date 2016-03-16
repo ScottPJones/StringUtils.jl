@@ -1,6 +1,6 @@
-
 # interface proposal by Tom Breloff (@tbreloff)... comments welcome
-# This uses the more basic formatting based on FormatSpec and the cfmt method (formerly called fmt, which I repurposed)
+# This uses the more basic formatting based on FormatSpec and the pyfmt method
+# (formerly called fmt, which I repurposed)
 
 # TODO: swap out FormatSpec for something that is able to use the "format" method, which has more options for units, prefixes, etc
 # TODO: support rational numbers, autoscale, etc as in "format"
@@ -112,7 +112,7 @@ end
 
 # --------------------------------------------------------------------------------------------------
 
-# TODO: get rid of this entire hack by moving commas into cfmt
+# TODO: get rid of this entire hack by moving commas into pyfmt
 
 function optionalCommas(x::Real, s::AbstractString, fspec::FormatSpec)
     dpos = findfirst(s, '.')
@@ -146,12 +146,12 @@ optionalCommas(x, s::AbstractString, fspec::FormatSpec) = s
 
 # TODO: do more caching to optimize repeated calls
 
-# creates a new FormatSpec by overriding the defaults and passes it to cfmt
+# creates a new FormatSpec by overriding the defaults and passes it to pyfmt
 # note: adding kwargs is only appropriate for one-off formatting.  
 #       normally it will be much faster to change the fmt_default formatting as needed
 function fmt(x; kwargs...)
     fspec = isempty(kwargs) ? fmt_default(x) : FormatSpec(fmt_default(x); kwargs...)
-    s = cfmt(fspec, x)
+    s = pyfmt(fspec, x)
 
     # add the commas now... I was confused as to when this is done currently
     if fspec.tsep

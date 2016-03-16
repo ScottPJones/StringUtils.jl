@@ -166,5 +166,3 @@ printfmt(fe::StringOrFE, args...) = printfmt(STDOUT, fe, args...)
 printfmtln(io::IO, fe::StringOrFE, args...) = (printfmt(io, fe, args...); println(io))
 printfmtln(fe::StringOrFE, args...) = printfmtln(STDOUT, fe, args...)
 
-format(fe::StringOrFE, args...) = 
-    (buf = IOBuffer(); printfmt(buf, fe, args...); bytestring(buf))

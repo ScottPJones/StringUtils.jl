@@ -208,8 +208,34 @@ function s_interp_parse(s::AbstractString, unescape::Function, p::Function)
                         s[k] == '(' && break
                     end
                     _, j = parse(s, k, greedy=false)
-                    str = string("(cfmt(\"", s[beg:k-1], "\",", s[k+1:j-1], ")")
+                    str = string("(cfmt(\"", s[beg-1:k-1], "\",", s[k+1:j-1], ")")
                 end
+                ex, _ = parse(str, 1, greedy=false)
+                if isa(ex, Expr) && is(ex.head, :continue)
+                    throw(ParseError("Incomplete expression"))
+                end
+                push!(sx, esc(ex))
+                i = j
+            elseif s[k] == '{'
+                # Move past \\, c should point to '{'
+                c, k = next(s, k)
+                done(s, k) && throw(ParseError("Incomplete {...} Python format expression"))
+                # Handle interpolation
+                if !isempty(s[i:j-1])
+                    push!(sx, unescape(s[i:j-1]))
+                end
+                beg = k # start location
+                c, k = next(s, k)
+                while c != '}'
+                    done(s, k) && throw(ArgumentError("\\{ missing closing } in $(repr(s))"))
+                    c, k = next(s, k)
+                end
+                c != '(' && throw(ParseError("Missing (expr) in Python format expression"))
+                # Need to find end to parse to
+                _, j = parse(s, k, greedy=false)
+                # This is a bit hacky, and probably doesn't perform as well as it could,
+                # but it works! Same below.
+                str = "(pyfmt" * s[k:j-1] * ")"
                 ex, _ = parse(str, 1, greedy=false)
                 if isa(ex, Expr) && is(ex.head, :continue)
                     throw(ParseError("Incomplete expression"))
