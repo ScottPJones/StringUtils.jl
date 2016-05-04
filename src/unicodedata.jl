@@ -1,4 +1,4 @@
-const unicode16bit = Dict{ASCIIString, UInt16}(
+const unicode16bit = Dict{ASCIIStr, UInt16}(
     "NULL" => 0x0000,
     "START OF HEADING" => 0x0001,
     "START OF TEXT" => 0x0002,
@@ -17918,7 +17918,7 @@ const unicode16bit = Dict{ASCIIString, UInt16}(
     "OBJECT REPLACEMENT CHARACTER" => 0xFFFC,
     "REPLACEMENT CHARACTER" => 0xFFFD,
 )
-const unicode32bit = Dict{ASCIIString, UInt32}(
+const unicode32bit = Dict{ASCIIStr, UInt32}(
     "LINEAR B SYLLABLE B008 A" => 0x10000,
     "LINEAR B SYLLABLE B038 E" => 0x10001,
     "LINEAR B SYLLABLE B028 I" => 0x10002,

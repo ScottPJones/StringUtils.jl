@@ -1,12 +1,12 @@
-formatters = Dict{ ASCIIString, Function }()
+formatters = Dict{ ASCIIStr, Function }()
 
-function cfmt( fmt::ASCIIString, x )
+function cfmt( fmt::ASCIIStr, x )
     global formatters
     f = generate_formatter( fmt )
     f( x )
 end
 
-function generate_formatter( fmt::ASCIIString )
+function generate_formatter( fmt::ASCIIStr )
     global formatters
     if haskey( formatters, fmt )
         return formatters[fmt]
@@ -78,7 +78,7 @@ function generate_formatter( fmt::ASCIIString )
     f
 end
 
-function addcommas( s::ASCIIString )
+function addcommas( s::ASCIIStr )
     len = length(s)
     t = ""
     for i in 1:3:len
@@ -105,7 +105,7 @@ function generate_format_string(;
         signed::Bool=false,
         positivespace::Bool=false,
         alternative::Bool=false,
-        conversion::ASCIIString="f" #aAdecEfFiosxX
+        conversion::ASCIIStr="f" #aAdecEfFiosxX
         )
     s = "%"
     if commas
@@ -149,13 +149,13 @@ function format{T<:Real}( x::T;
         parens::Bool=false, # use (1.00) instead of -1.00. Used in finance
         alternative::Bool=false, # usually for hex
         mixedfraction::Bool=false,
-        mixedfractionsep::UTF8String="_",
-        fractionsep::UTF8String="/", # num / den
+        mixedfractionsep::UTF8Str="_",
+        fractionsep::UTF8Str="/", # num / den
         fractionwidth::Int = 0,
         tryden::Int = 0, # if 2 or higher, try to use this denominator, without losing precision
-        suffix::UTF8String="", # useful for units/%
+        suffix::UTF8Str="", # useful for units/%
         autoscale::Symbol=:none, # :metric, :binary or :finance
-        conversion::ASCIIString=""
+        conversion::ASCIIStr=""
         )
     checkwidth = commas
     if conversion == ""

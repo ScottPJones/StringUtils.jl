@@ -78,10 +78,10 @@ end
 ### Format expression
 
 type FormatExpr
-    prefix::UTF8String
-    suffix::UTF8String
+    prefix::UTF8Str
+    suffix::UTF8Str
     entries::Vector{FormatEntry}
-    inter::Vector{UTF8String}
+    inter::Vector{UTF8Str}
 end
 
 _raise_unmatched_lbrace() = error("Unmatched { in format expression.")
@@ -118,7 +118,7 @@ function FormatExpr(s::AbstractString)
     prefix = utf8("")
     suffix = utf8("")
     entries = FormatEntry[]
-    inter = UTF8String[]
+    inter = UTF8Str[]
 
     # scan
     (p, prefix) = find_next_entry_open(s, 1)

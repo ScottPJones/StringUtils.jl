@@ -1,6 +1,8 @@
 module HTMLNames
 
-const htmltwochar = Dict{ASCIIString, NTuple{2,UInt16}}(
+using ..FixStrings
+
+const htmltwochar = Dict{ASCIIStr, NTuple{2,UInt16}}(
     "acE"	=> (0x223E, 0x0333),
     "cups"	=> (0x222A, 0xFE00),
     "bne"	=> (0x003D, 0x20E5),
@@ -95,7 +97,7 @@ const htmltwochar = Dict{ASCIIString, NTuple{2,UInt16}}(
     "vnsub"	=> (0x2282, 0x20D2),
     "vnsup"	=> (0x2283, 0x20D2))
 
-const htmlnonbmp = Dict{ASCIIString, UInt16}(
+const htmlnonbmp = Dict{ASCIIStr, UInt16}(
     "Afr"	=> 0xD504,
     "afr"	=> 0xD51E,
     "Aopf"	=> 0xD538,
@@ -230,7 +232,7 @@ const htmlnonbmp = Dict{ASCIIString, UInt16}(
     "Zscr"	=> 0xD4B5,
     "zscr"	=> 0xD4CF)
 
-const htmlonechar = Dict{ASCIIString, UInt16}(
+const htmlonechar = Dict{ASCIIStr, UInt16}(
     "Aacute"	=> 0x00C1,
     "aacute"	=> 0x00E1,
     "Abreve"	=> 0x0102,
@@ -2131,7 +2133,7 @@ const htmlonechar = Dict{ASCIIString, UInt16}(
     "zwj"	=> 0x200D,
     "zwnj"	=> 0x200C)
 
-function lookupname(str::ASCIIString)
+function lookupname(str::ASCIIStr)
     res = get(htmlonechar, str, 0x0000)
     res != 0x0000 && return string(Char(res))
     res = get(htmlnonbmp, str, 0x0000)

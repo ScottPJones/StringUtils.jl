@@ -252,10 +252,10 @@ function s_interp_parse(s::AbstractString, unescape::Function, p::Function)
     if !isempty(s[i:end])
         push!(sx, unescape(s[i:j-1]))
     end
-    length(sx) == 1 && isa(sx[1], ByteString) ? sx[1] : Expr(:call, :sprint, p, sx...)
+    length(sx) == 1 && isa(sx[1], ByteStr) ? sx[1] : Expr(:call, :sprint, p, sx...)
 end
 
 s_interp_parse(s::AbstractString, u::Function) = s_interp_parse(s, u, print)
 s_interp_parse(s::AbstractString) =
-    s_interp_parse(s, x -> isvalid(UTF8String, s_unescape_string(x))
+    s_interp_parse(s, x -> isvalid(UTF8Str, s_unescape_string(x))
                    ? s_unescape_string(x) : throw(ArgumentError("Invalid UTF-8 sequence")))
