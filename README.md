@@ -18,7 +18,7 @@ also to be able to write programs using those characters that might not even dis
 correctly in their editor.
 
 This now has some initial formatting capability, based on Tom Breloff's wonderful PR #10 to the
-JuliaLang/Formatting.jl package (by Dahua Lin and other contributors).
+[JuliaIO/Formatting.jl](https://github.com/JuliaIO/Formatting.jl) package (by Dahua Lin and other contributors).
 
 `\%(arguments)` is interpolated as a call to fmt(arguments).
 This is especially useful when defaults have been set for the type of the first argument.
